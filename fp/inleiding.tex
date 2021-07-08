@@ -1,0 +1,414 @@
+
+This chapter discusses several practicalities related to the Haskell course
+and provides a background on Functional Programming in general and on Haskell
+specifically.
+
+Before we dive into practical programming with the functional programming language
+Haskell, we briefly consider the mathematical foundation of (functional) programming
+languages. Even though a number of concepts may seem initially rather
+abstract, we will gradually discover that they provide the underlying philosophy
+around which Haskell is built. Without insight into this philosophy, we cannot
+understand the essence of functional programming.
+
+We also briefly summarize
+the history and impact of the Haskell language, and mention a number of
+useful Haskell-related sources and tools.
+
+%===============================================================================
+\section{Course Setup}
+
+The Haskell course which this book is a part of is organised around
+practicing---the only way to learn programming---uses a flipped classroom
+teaching style for that.
+\begin{description}
+\item[Before the lecture:]
+You prepare for the lecture by reading---in
+advance---a chapter of this book and by making some basic preparatory exercises. 
+\item[During the lecture:]
+We focus on getting a deeper understanding of the material by addressing any questions and difficulties you have putting what you have read into practice by solving (basic and advanced) exercises together, discussing alternative solution strategies, \ldots
+\item[After the lecture:]
+You get additional practice by making additional exercises more indenpently.
+\end{description}
+
+To help you along we have a whole support system in place:
+\begin{description}
+\item[The e-systant platform:]
+We have created the \url{http:://esystant.be} exercise platform for this
+course. The platform allows you to make Haskell exercises in the browser
+without having to install anything. E-systant contains all the course's
+exercise assignments. It gives automatic feedback on your solutions, allows
+you to improve them and also provides model solutions. You can keep track
+of your progress relative to your peers on the leaderboard.
+You can use e-systant at the exam; it includes all the electronic documents that you can consult at that time.
+
+\item[Slack workspace:]
+Since the corona crisis we are using a slack workspace both during and
+outside of the lectures. Students loved this and strongly recommended that we
+keep this for you.
+
+We use the workspace during and outside the lectures (it's there 24/7) to
+exchange code snippets, ask questions, give clarifications, discuss, vote,
+post memes, \ldots
+
+\item[Coaches:]
+Some courses have teaching assistants; we have coaches. They are there
+to help you become better Haskell programmers. Be sure to talk to them
+regularly and discuss code you have written. Whether you are stuck or
+think it is already perfect, our coaches will help you go further.
+
+\end{description}
+
+%===============================================================================
+\section{Beyond the Course}
+
+This course only covers the basics of Haskell and functional programming. For
+students who have a taste for more, I recommend reading the Advanced Topics
+part of this book and consider one or more follow-up activities:
+\begin{itemize}
+% \item De studentenkring Zeus organiseert een tweemaandelijkse bijeenkomst voor
+%       ge\"interesseerden in Haskell, genaamd GhentFPG.
+\item The Capita Selecta: Artificial Intelligence course consists
+      of several tracks, one of which is ``Language Engineering in Haskell''.
+\item You can conduct further research into Haskell and other (functional)
+      programming languages during a master thesis, and possibly during a subsequent PhD.
+\item Utrecht University organises a yearly summer school
+      where you can expand your practical experience with Haskell.
+\item Haskell has a very active open source community
+      that is welcoming to newcomers. The community participates every year
+      in the Google Summer of Code. Just like former students of this book
+      you can participate.
+\item There are interesting international internship opportunities. 
+      For instance, one former student of this book has done an internship
+      at Tsuru Capital in Tokyo, a second 
+      at Google in Zurich and a third at CentralApp in Brussels.
+\item There are interesting career opportunities using Haskell. 
+      Former students of this course work at CentralApp, Fugue, PieSync, Standard Chartered, and Tweag.
+\end{itemize}
+
+Note that knowledge of Haskell is also an asset for companies that do not
+make use of functional programming, but are knowledgeable about the domain.
+It is often used as a filter to identify the better programmer; of course
+everyone knows Java, but Haskell is a different matter.
+
+%===============================================================================
+\section{The $\lambda$-calculus}
+
+Functional programming goes back to the time immediately before the development
+of the first computer and the advent of programming languages. The first
+computer scientists, who were mathematicians, were already preparing their arrival.
+They were studying at a fairly abstract level what could and could not be computed
+with a computer. For this purpose \textbf{Alonzo Church} developed in 1936 
+the first version of the $\lambda$-calculus. 
+
+This $\lambda$-calculus captures the essence of a programming language, but
+is on the one hand too \emph{minimalistic} and on the other hand too \emph{abstract}
+to be able to speak of a proper programming language.
+
+The minimalism means that this calculus has just enough features to study
+computability without needlessly complicating the mathematical study of this
+phenomenon. As a consequence, the calculus can \emph{in theory} express practical
+computations, but is \emph{in practice} too impractical to do this effectively. 
+Of course we cannot condemn the calculus for that, as it was never
+its intended use. Concretely the calculus consists of only 3 different expression
+forms and 3 different calculation rules.
+
+%-------------------------------------------------------------------------------
+\subsection{Expressions}
+
+A program in the calculus is an \emph{expression} $E$. Such an expression 
+can be one of three different possible forms.
+\begin{framed}
+\begin{equation*}
+\begin{array}{rcl@{\hspace{3cm}}l}
+E & ::=  & x                    & \text{variables}\\
+  & \mid & \lambda x.E          & \text{(function) abstractions} \\
+  & \mid & E_1\,E_2             & \text{(function) applications}
+\end{array}
+\end{equation*}
+\end{framed}
+
+The central form\footnote{It is this form that gives functional
+programming its name.} is the function abstraction $\lambda x.E$, which is
+also called 
+$\lambda$-abstraction, abstraction or simply function. This
+$\lambda$-abstraction represents a function in 1 parameter $x$ and a function body
+$E$ that may refer to the parameter $x$.  
+
+A parameter $x$ presents a variable that can be used in the body of a function.
+An example of a very simple function is $\lambda x.x$,
+which is the function that just returns its parameter. This function
+is known as the \emph{identity function}.
+
+The third expression form is the function application, or application for short,
+$E_1\,E_2$. This form applies a function expression $E_1$ to another expression
+$E_2$. An example of such an application is the application of the identity function
+to the variable $y$: $(\lambda x.x)\,y$.
+
+The $\lambda x$ part of the notation is called the
+\emph{$\lambda$-binder}, because it binds the parameter $x$ to a value during function application.
+Within an expression $E$ we distinguish the \emph{bound variables} from the \emph{free variables}.
+A bound variable is one that occurs in $E$ ``under'' a binder that binds it.
+A free variable is one that is not bound by a binder. For example,
+in $\lambda x.(\lambda y.(x\,y))\,z$ both
+$x$ and $y$ are bound variables, while $z$ is free. 
+
+Sometimes there can be multiple binds for the same variables. For example,
+there are two binders for $x$ in $\lambda x.(\lambda x.x)$. In this case,
+every occurrence of a variable is bound by its nearest (i.e., innermost) binder.
+We say that the inner binder shadows the outer binder.
+If there are multiple occurrences of a variable, each occurrence may be bound by
+a different binder. For example, in $\lambda x.((\lambda x.x)\,x)$ the $x$ on the left
+is bound by the inner binder, while the $x$ on the right is bound by the outer binder.
+The same variable can also occur both free and bound. For instance, in $(\lambda x.x)\,x$
+the $x$ on the left is bound, while the one on the right is free.
+
+%-------------------------------------------------------------------------------
+\subsection{Calculation Rules}
+
+On their own the expression forms are not very useful: we can put together
+various expressions, but have not much to say about them at this point.
+The expressions are only notation (\textit{syntax}) without meaning (\textit{semantics}).
+
+The calculation rules assign a kind of meaning to the expressions. There are three
+calculation rules for the $\lambda$-calculus, given in the form of equations:
+
+\begin{framed}
+\begin{equation*}
+\begin{array}{rcl@{\hspace{3cm}}l}
+ \lambda x.E & \equiv & \lambda y.[y/x]E           & \text{$\alpha$-conversion} \\ \\
+(\lambda x.E_1)\,E_2 & \equiv & [E_2/x]E_1         & \text{$\beta$-reduction}   \\ \\
+\lambda x.(E x) & \equiv & E         & \text{$\eta$-conversion}   
+\end{array}
+\end{equation*}
+\end{framed}
+
+\paragraph{$\alpha$-conversion}
+You have probably already developed the following intuition in the context of
+other programming languages you know: the names of parameters are irrelevant,
+you can freely change them without affecting the behavior of your program.
+This is also true in the $\lambda$-calculus. Whether you write the identity
+function as $\lambda x.x$ or as $\lambda y.y$ makes no difference: the two
+expressions are equivalent.
+
+The $\alpha$-conversion rule expresses this formally. The rule
+makes use of the generic notation
+$[y/x]E$ for renaming variables. This notation expresses that
+we apply the substitution to the expression
+$E$. This means that we replace in $E$ every \textit{free} occurrence of $x$ 
+with $y$. For example, $[y/x]x$ results in $y$, but $[y/x](\lambda x.x)$ remains $\lambda x.x$
+because $x$ does not occur free.
+
+While reasoning about the equivalence of two expressions, the
+$\alpha$-conversion is used to bridge the trivial differences in variable
+naming. A second important application of $\alpha$-conversion is to ensure that
+every $\lambda$-binder in an expression $E$ binds a variable with a different name.
+This avoids confusion and unintended shadowing.
+
+\paragraph{$\beta$-reduction}
+The rule for $\beta$-reduction is closely connected to the evaluation
+of programs in an actual programming language. It allows us to \emph{evaluate}
+an expression by simplifying or \emph{reducing} it. The rule replaces a function
+application $(\lambda x.E_1)\,E_2$ by the function body
+$E_1$ in which the parameter $x$ has been replaced by the argument
+$E_2$. Just like the previous rule, this rule expresses the replacement in terms of substitution.
+This means that only the free occurrences of the parameter $x$ are replaced.
+
+\paragraph{$\eta$-conversion}
+The 
+$\eta$-conversion rule is an additional rule for comparing expressions without
+evaluating them. The rule expresses the notion of \emph{extensionality}:
+the two expressions $\lambda x.(E\,x)$
+(where $x$ does not occur freely in $E$) and $E$
+behave in the same way modulo $\beta$-reduction.
+If we  $\beta$-reduce $(((\lambda x.)E\,x)\,E')$,
+for any $E'$, we get $E\,E'$. Hence, modulo $\beta$-reduction
+we cannot distinguish the two expressions. This fact is captured 
+in the rule for $\eta$-conversion.
+
+This rule is often applied to write expressions more compactly.
+
+\paragraph{Equivalence}
+The three calculation rules are expressed as axioms of the equivalence relation
+$\equiv$. Three additional, usually implicitly assumed, defining axioms of an equivalence relation
+are 
+\textit{reflexivity}, \textit{symmetry} and \textit{transitivity}. 
+A final special axiom is \emph{Leibniz's law}. This law expresses that
+we may replace a subexpression 
+$E_1$ of a larger expression $E$ by an equivalent subexpression $E_2$ and still preserve
+equivalence of the whole.
+\begin{framed}
+\begin{equation*}
+\begin{array}{rcl@{\hspace{1cm}}l}
+ E & \equiv  & E                    & \text{reflexivity} \\ \ \\[0cm] 
+ E_2 & \equiv & E_1\hspace{1cm}\text{if }E_1 \equiv E_2 & \text{symmetry} \\ \ \\[0cm]
+ E_1 & \equiv & E_3\hspace{1cm}\text{if }E_1 \equiv E_2\text{ en }E_2 \equiv E_3 & \text{transitivity} \\ \ \\[0cm]
+ [{E_1}/x] E  & \equiv & [E_2/x]E  \hspace{1cm}\text{if }E_1 \equiv E_2     & \text{Leibniz' law}
+\end{array}
+\end{equation*}
+\end{framed}
+
+\paragraph{Variable Capture}
+A problematic situation may arise during $\beta$-reduction that
+inadvertently changes the meaning of an expression.
+Consider the expression
+$(\lambda y.(\lambda x.(x\,y)))\,x$. If we carelessly apply $\beta$-reduction
+to the outermost application, we obtain $\lambda x.(x\,x)$. Yet, this renders
+the second occurrence of $x$, which was originally free, into a bound variable.
+We say that the variable has been captured by the $\lambda$-binder. This does
+not happen when we start from an $\alpha$-renamed variant of the original
+expression
+$(\lambda y.(\lambda z.(z\,y)))\,x$, which reduces to
+$\lambda z.(z\,x)$. 
+We consider the first variable-capturing $\beta$-reduction to be invalid.
+In practice, we always make sure to first rename bound variables to avoid
+variable capture from happening.
+
+%-------------------------------------------------------------------------------
+% \subsection{Naar volwaardige programmeertalen}
+
+%===============================================================================
+\section{Haskell}
+
+This book teaches functional programming in Haskell. Haskell is the mainstream
+functional programming language that most closely embodies the principles of
+functional programming.  That is why we call it a \emph{pure} functional
+language; it is not diluted by concessions to the imperative paradigm of
+computer hardware and mainstream programming languages. An additional feature
+of Haskell is its \emph{laziness}, which we discuss at length in a later
+chapter.
+
+%-------------------------------------------------------------------------------
+\subsection{History}
+
+The '80s were abuzz with research into lazy functional programming languages.
+Many researchers built their own experimental language implementation, of which 
+the commercial Miranda system (1985) is by far the most well-known.
+At the end of the '80s many researchers decided that it made more sense to join
+forces than to continue dabbling with their individual systems. They founded the
+\emph{Haskell committee} to design a common lazy functional programming language.
+
+\begin{sidenote}
+\paragraph{What's in a name}
+The name Haskell has been derived from the American logician
+\emph{Haskell B. Curry}
+(1900-1982). He studied the essence of programming by means of minimal calculi known as
+\emph{combinators}. We will encounter his name twice more, when we discuss the 
+\emph{Curry-Howard isomorphism} and the concept of \emph{currying}.\footnotemark[1] Haskell Curry has also given his name to another pure functional language,
+Curry, which contains elements of logic programming.
+\ \footnoterule \ \\
+{\footnotesize\footnotemark[1]{The name currying is actually inappropriate as the concept had been invented previously by Sch\"onfinkel.}}
+\end{sidenote}
+
+The Haskell committee released Haskell 1.0 in 1990.
+In subsequent years new versions of the language were released until
+finally a stable standard was published in 1998: Haskell'98. At that point
+the committee was effectively disbanded, but the development of different
+Haskell systems did of course continue. Recently the Haskell committee 
+was re-instituted by the Haskell' (pronounced ``Haskell \emph{Prime}'') movement to release updates to the
+Haskell standard on a yearly basis.
+
+%-------------------------------------------------------------------------------
+\subsection{Prominent Language Properties}
+
+There are many interesting aspects to the Haskell language and its ecosystem.
+
+\paragraph{Types}
+Haskell is known for its sophisticated type system. The language itself
+is \emph{strongly and statically} typed, and really puts the types to
+work for the programmer instead of the opposite.
+
+Strong typing means that every value in the program has a unique associated type
+and that only operations that conform to that type can be applied to it. There 
+is no wiggle room.
+
+Static typing means that the types and possible type errors are established
+during compilation, and thus before execution. In contrast to most statically
+typed languages, the programmer does not have to declare much type information.
+The Haskell compiler can mostly determine the types on its own using a process
+known as \emph{type inference}.
+
+\paragraph{Abstraction}
+Haskell has a large capacity for abstraction. Many repetitive code patterns can
+be isolated in named entities and reused under that name.
+
+The threshold for code reuse is a lot lower than with the typical unit of
+abstraction in object-oriented languages, the class. Hence, a Haskell program
+is often assembled from many small entities that are quickly composed into
+various new combinations. Large screen-filling code blocks and copy-paste
+programming are simply not done in Haskell.
+
+As a consequence, Haskell does not need books about \emph{design patterns}, 
+but instead provides libraries with reusable abstractions. Haskell programs
+are thus small and make ample use of libraries.
+
+\paragraph{Domain-Specific Languages}
+The emphasis on small reusable abstractions, combined with advanced syntax capabilities,
+make Haskell a good stomping ground for \emph{embedded domain-specific languages} (EDSLs).
+The core idea is to offer in Haskell a combination of abstractions that are useful
+for solving problems in a particular problem domain (e.g., drawing figures,
+managing financial contracts or controlling robots). By composing these abstractions
+in various ways new problems in the problem area can be solved quickly. Thanks to 
+suitable syntax and cohesive abstractions it seems as if the programmer is no longer
+working in Haskell, but in a custom domain-specific programming language.
+
+
+\paragraph{Learning Curve}
+The Haskell learning curve looks quite different from that of Java.
+On the one hand it is much steeper. This means that the language requires 
+more effort and insight of the programmer to reach a certain skill level. For instance,
+the programmer has to be able to handle more abstract concepts, and identify their potential
+application to concrete problems.
+On the other hand Haskell provides a much richer learning experience. Haskell facilitates
+continued learning about programming concepts and different ways to tackle
+programming problems. Even if you do not end up programming in Haskell in the long run, many
+of the ideas learnt in Haskell can be applied in the context of other languages.
+Moreover, once mastered, Haskell is very powerful. For instance, Haskell programs are
+typically $10\times$ shorter than the corresponding Java programs.
+
+%-------------------------------------------------------------------------------
+\subsection{Industrial Impact}
+
+The general presence and visibility of Haskell in the software industry is
+rather limited. Nevertheless, the language has a substantial indirect influence
+on mainstream programming. Many ideas and concepts are first conceived, developed 
+and fine-tuned in the context of Haskell before the most successful ones trickle
+down and are adopted by the mainstream. A good example is Scala, which was
+mainly influenced by Haskell, and which in turn influences Java and C\#.
+In general it is fair to say that the development of mainstream programming
+languages is very sluggish, and that Haskell is one of the trailblazers
+far ahead of the pack.
+
+Due to its steep learning curve Haskell is less suitable for (large) companies
+with a lower-educated programmer population. Instead, Haskell can often be
+found in small, highly productive programmer teams (inside or outside of large
+companies), such as at AT\&T, Bluespec, Facebook, Galois, Linspire, Qualcomm
+and Google. In addition, Haskell also thrives in application niches with
+highly educated programmers.  The most prevalent such area is that of
+\emph{investment banks}: ABN AMRO, Barclays Capital, Credit Suisse, Deutsche
+Bank, Standard Chartered and Tsuru Capital.
+
+
+%-------------------------------------------------------------------------------
+% \subsection{Practicalities}
+% 
+% \paragraph{Haskell System}
+% This book uses the Haskell Platform\footnote{\url{http://hackage.haskell.org/platform/}}
+% which simultaneously installs the famous Glasgow Haskell Compiler (GHC), the most important libraries
+% and the \texttt{cabal} package manager. Do not proceed before installing this platform. 
+% % Wie niet over een eigen computer beschikt kan terecht
+% % op Helios\footnote{\url{http://helpdesk.ugent.be/helios/}} waar GHC reeds
+% % beschikbaar is.
+% 
+% \paragraph{Documentation}
+% There are many online information sources that teach various aspects of Haskell.
+% A general starting point is \url{http://haskell.org}, the
+% official Haskell website. Haskell-related discussion forums are the official
+% mailing list
+% \url{haskell-cafe@haskell.org} and subfora on well-known sites like
+% Reddit and StackOverflow. More information and documentation on GHC can be found
+% at \url{https://www.haskell.org/ghc/}. 
+% % Voor specifieke vragen over
+% % deze cursus kan je in eerste plaats terecht bij het Minerva-forum en bij de
+% % docent.
+%  
+% 

@@ -1,0 +1,274 @@
+%if not lhs2tex_Formatting_fmt_read
+%let lhs2tex_Formatting_fmt_read = True
+%include polycode.fmt
+%include forall.fmt
+
+%if style /= newcode
+\ReadOnlyOnce{Formatting.fmt}%
+\makeatletter
+
+\let\Varid\mathsf
+\let\Conid\mathsf
+%subst keyword a        = "\keyw{" a "}"
+%subst numeral a        = "\con{" a "}"
+%subst string  a        = "\con{\text{\tt \char34 " a "\char34}}"
+%subst char    a        = "\con{\text{\tt ''" a "''}}"
+
+%include syntax-prelude.fmt
+
+\colorlet{identifier}{blue!45!black}
+\colorlet{constructor}{green!45!black}
+\colorlet{keyword}{red!40!black}
+\colorlet{darkgreen}{green!30!black}
+
+\newcommand{\keyw}[1]{{\color{keyword}\textsf{\textbf{#1}}}}
+\newcommand{\ty}[1]{{\color{identifier}\Conid{#1}}}
+\newcommand{\con}[1]{{\color{constructor}{\Conid{#1}}}}
+\newcommand{\id}[1]{{\color{identifier}\Varid{#1}}}
+\newcommand{\cl}[1]{{\color{identifier}\Varid{#1}}}
+\newcommand{\opsym}[1]{\mathrel{#1}}
+
+\newcommand\Keyword[1]{\textbf{\textsf{#1}}}
+\newcommand\Hide{\mathbin{\downarrow}}
+\newcommand\Reveal{\mathbin{\uparrow}}
+
+%format Hide   = "\con{\Hide}"
+%format reveal = "\id{\Reveal}"
+%format HideStream    = Hide
+%format HideLambda    = Hide
+%format revealLambda  = reveal
+%format HideLambda2   = Hide
+%format HideLambda3   = Hide
+%format revealLambda2 = reveal
+%format revealLambda3 = reveal
+%format revealStream  = reveal
+%format e1
+%format e2
+%format e3
+%format v1
+%format v2
+%format v3
+%format t1
+%format t2
+%format t3
+%format x1
+%format x2
+%format x3
+%format y1
+%format y2
+%format y3
+%format l1
+%format l2
+%format l3
+%format r1
+%format r2
+%format r3
+%format g1
+%format g2
+%format g3
+%format s1
+%format s2
+%format Exp2   = Exp
+%format EMu2   = EMu
+%format EApp2  = EApp
+%format EInt2  = EInt
+%format EPlus2 = EPlus
+%if False
+%format error o = "\bot"
+%endif
+%format PLit   = Lit
+%format PLit2  = PLit
+%format PLit3  = PLit
+%format PVar   = Var
+%format PVar2  = PVar
+%format PVar3  = PVar
+%format PBool  = Bool
+%format PBool2 = PBool
+%format PBool3 = PBool
+%format PFix2  = Fix
+%format PFix3  = PFix2
+%format PIf    = If
+%format PIf2   = PIf
+%format PIf3   = PIf
+%format PAdd   = Add
+%format PAdd2  = PAdd
+%format PAdd3  = PAdd
+%format PMult  = Mult
+%format PMult2 = PMult
+%format PMult3 = PMult
+%format PEq    = Eq
+%format PEq2   = PEq
+%format PEq3   = PEq
+%format VBool2 = VBool
+%format VBool3 = VBool2
+%format PLam   = Lam
+%format PLam2  = PLam
+%format PLam3  = PLam
+%format PApp   = App
+%format PApp2  = PApp
+%format PApp3  = PApp
+%format Value2 = Value
+%format Lambda2 = Lambda
+%format Lambda3 = Lambda
+%format eval2  = eval
+%format PLambda = Expr
+%format PLambda2 = PLambda
+%format PLetRec = LetRec
+%format PFix = Mu
+%format Val    = VF
+%format VLit   = VI
+%format VBool  = VB
+%format mu f (o) = "\mu " f ". " o
+%format :-> = "\leadsto"
+%format HList  = TList
+%format HNil   = TNil
+%format hhead  = thead
+%format htail  = ttail
+%format hmap   = tmap
+%format hzipWith = tzipWith
+%format hiter  = titerate'
+%format titerate'
+%format hiterate = titerate
+%format iterate = "\id{iterate}"
+%format sub (x) (y) = x "_{" y "}"
+%format size   = tlength
+%format .+.    = "\oplus "
+%format ...    = "\dots "
+%format ClosedExpr = "\ty{ClosedExpr}"
+%format Expr0  = Expr
+%format one0   = one
+%format eval0  = eval
+%format .+-.   = .+.
+%format Expr1  = Expr
+%format one1   = one
+%format eval1  = eval
+%format text1  = text
+%format .+=.   = .+.
+%format tree1  = tree_I
+%format Expr2  = Expr
+%format One2   = One
+%format Add2   = Add
+%format one2   = one
+%format eval2  = eval
+%format text2  = text
+%format .+*.   = .+.
+%format tree2  = tree
+%format Expr3  = Expr
+%format One3   = One
+%format Add3   = Add
+%format Let3   = Let
+%format one3   = one
+%format eval3  = eval
+%format text3  = text
+%format .+!.   = .+.
+%format tree3  = tree_E
+%format tree_I = "\id{tree_I}"
+%format tree_E = "\id{tree_E}"
+%format let3_  = let_
+%format dots   = ...
+%format Expr   = "\ty{Expr}"
+%format ExprF  = "\ty{Expr_F}"
+%format Lit    = "\con{Lit}"
+%format FLit   = "\con{Lit_F}"
+%format FAdd   = "\con{Add_F}"
+%format Add    = "\con{Add}"
+%format IfZero = "\con{IfZero}"
+%format PIfZero = IfZero
+%format One    = "\con{One}"
+%format Let    = "\con{Let}"
+%format Var    = "\con{Var}"
+%format Lam    = "\con{Lam}"
+%format App    = "\con{App}"
+%format Mu     = "\con{Mu}"
+%format LetRec = "\con{LetRec}"
+%format one    = "\id{one}"
+%format eval   = "\id{eval}"
+%format text   = "\id{text}"
+%format tree   = tree_E
+%format let_   = "\id{let\_}"
+%format mu_    = "\id{mu\_}"
+%format lam_   = "\id{lam\_}"
+%format var    = "\id{var}"
+%format *      = "\star"
+%format plus   = "\id{plus}"
+%format error  = "\id{error}"
+%format Value  = "\ty{Value}"
+%format I      = "\con{N}"
+%format F      = "\con{F}"
+%format tau    = "\tau "
+%format ifZero = "\id{ifZero}"
+%format app    = "\id{app}"
+%format example = "\id{example}"
+%format mul    = "\id{mul}"
+%format letrec = "\id{letrec}"
+%format letrec_ = "\id{letrec\_}"
+%format inline = "\id{inline}"
+%format .@.    = "\opsym{\odot}"
+%format even   = "\Varid{even}"
+%format evenOdd = "\id{evenOdd}"
+%format ... = "\dots "
+%format TList = "\ty{TList}"
+%format TNil  = "\con{TNil}"
+%format * = "\mathbin{*}"
+%format where = "\mathrel{\keyw{where}}"
+%format Id = "\ty{I}"
+%format runId = "\id{unI}"
+%format hlist = "\id{hlist}"
+%format K = "\ty{K}"
+%format IdC = "\con{I}"
+%format KC = "\con{K}"
+%format unK = "\id{unK}"
+%format list = "\id{list}"
+%format thead = "\id{thead}"
+%format ttail = "\id{ttail}"
+%format tlength = "\id{tlength}"
+%format tmap = "\id{tmap}"
+%format mapList = "\id{tmapK}"
+%format tzipWith = "\id{tzipWith}"
+%format TRep = "\ty{RList}"
+%format RNil = "\con{RNil}"
+%format RCons = "\con{RCons}"
+%format titer = "\id{titer}"
+%format titerate = "\id{titerate}"
+%format Rep = "\cl{CList}"
+%format rep = "\id{cList}"
+%format test = "\id{test}"
+%format intercalate = "\id{intercalate}"
+%format henumFrom = "\id{tenumFrom}"
+%format htoList = "\id{ttoList}"
+%format BindAlg = "\cl{BindAlg}"
+%format pvar = "\id{var}"
+%format pletrec = "\id{letrec}"
+%format Default = "\ty{Default}"
+%format D = "\con{D}"
+%format unD = "\id{unD}"
+%format lit = "\id{lit}"
+%format add = "\id{add}"
+%format lam = "\id{lam}"
+%format app = "\id{app}"
+%format ArithAlg = "\cl{ArithAlg}"
+%format LamAlg = "\cl{LamAlg}"
+%format ExprAlg = "\cl{ExprAlg}"
+%format Eval = "\ty{Eval}"
+%format E = "\con{E}"
+%format unE = "\id{unE}"
+%format toE = "\id{toE}"
+%format Text = "\ty{Text}"
+%format T = "\con{T}"
+%format text'
+%format Foldable = "\cl{Foldable}"
+%format Traversable = "\cl{Traversable}"
+%format ExprS = "\ty{Expr_D}"
+%format LitS = "\con{Lit_D}"
+%format AddS = "\con{Add_D}"
+%format MuRef = "\cl{MuRef}"
+%format build = "\id{build}"
+%format reifyGraph = "\id{reifyGraph}"
+%format Graph = "\con{Graph}"
+%format fromJust = "\id{fromJust}"
+%format print = "\id{print}"
+%format double = "\id{double}"
+\makeatother
+\EndFmtInput
+%endif
+%endif
