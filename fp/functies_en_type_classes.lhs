@@ -174,7 +174,7 @@ the two equations, with |h == subsequences|:
 \begin{equation*}
 |subsequences [] = z|
 \end{equation*}
-In, other words, |z| is the expected result for the empty list.
+In other words, |z| is the expected result for the empty list.
 Clearly an empty list has only one sublist: the empty list itself. Hence we expect:
 \begin{spec}
 > subsequences []
@@ -670,7 +670,7 @@ Now we can state that two expressions are equal if they evaluate to the same res
 >   e1 == e2  = eval e1 == eval e2
 
 Observe that in the above declaration the first occurrence of |==|
-denotes equality of expressions, while the second occurrences denotes
+denotes equality of expressions, while the second occurrence denotes
 equality of integers.
 
 \subsection{Laws}

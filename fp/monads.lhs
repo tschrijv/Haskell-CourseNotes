@@ -42,7 +42,7 @@ are only two syntactic forms:
 Kind |*| is the base case. It is the kind of all proper types. We say for instance that
 |Bool| has kind |*| and write this as |Bool :: *|.
 \item 
-The inductive case is kind |k_1 -> k_2|, where |k_1| are |k_2| themselves kinds.
+The inductive case is kind |k_1 -> k_2|, where |k_1| and |k_2| are themselves kinds.
 This is the kind of improper types. These types are also called \emph{type constructors},
 in analogy with data constructors, because they need to be applied to other types
 to obtain a proper type.
@@ -572,7 +572,7 @@ latter depends on the former. In fact, |bind m f| acts as function application
 for computations with side-effects where |m| is the argument and |f| is the
 function. In contrast with regular pure function application, which is written
 with a space in Haskell, both the argument and the function can produce side
-effects. The order of the arguments of |binds| indicates in which order the
+effects. The order of the arguments of |bind| indicates in which order the
 side effects happen: first those of the argument and then those of the
 function.
  
@@ -816,7 +816,7 @@ As a starting point, we introduce a type synonym for a state-passing computation
 > type SP s a = s -> (a, s)
 
 In words, a state-passing computation is one that takes an input state of type
-|s| and produces a output value of type |a| alongside an output state of type
+|s| and produces an output value of type |a| alongside an output state of type
 |s|. The |bindSP| function glues together two state-passing computations, whether
 the latter depends on the result of the former.
 \sethscode{customhscode}

@@ -204,7 +204,7 @@ Now we can easily prove the main theorem.
 <      reverse' l
 < == {- definition of |reverse'| -}
 <      go l []
-< == {- auxiliary thoerem -}
+< == {- auxiliary theorem -}
 <      reverse l ++ []
 < == {- property of |(++)| -}
 <      reverse l

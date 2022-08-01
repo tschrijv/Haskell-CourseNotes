@@ -114,6 +114,10 @@
 \part{Advanced Topics}
 
 %-------------------------------------------------------------------------------
+\chapter{Functional Algorithms, a Case Study}
+\input{fp/functional_algorithms}
+
+%-------------------------------------------------------------------------------
 \chapter{Equational Reasoning}
 \input{fp/EquationalReasoning}
 

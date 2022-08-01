@@ -417,5 +417,5 @@ By using these library functions, we can write |readNumbers| much more compactly
 < readNumbers n  = replicateM n readLn
 
 In the Haskell library, |sequence| and |replicateM| have more general types. The library 
-uses with the |Monad| type class to support all types, not just |IO|, that have
+uses the |Monad| type class to support all types, not just |IO|, that have
 |return| and |>>=| methods. This abstraction is discussed more extensively in Chapter~\ref{ch:monads}.

@@ -103,6 +103,7 @@
 %format x1
 %format x2
 %format x3
+%format x4
 %format x_n = "\Varid{x}_n"
 %format y1
 %format y2
@@ -120,6 +121,8 @@
 %format s0
 %format s1
 %format s2
+%format u1
+%format u2
 %format EMu2   = EMu
 %format EApp2  = EApp
 %format EInt2  = EInt
