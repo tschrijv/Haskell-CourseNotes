@@ -23,6 +23,7 @@ Symbolic & ASCII & Name \\
 |l1 ++ l2| & \Verb!l1 ++ l2! & list append \\
 |f . g| & \Verb!f . g! & function composition \\
 |m >>= f| & \Verb!m >>= f! & monadic bind \\
+|x <> y| & \Verb!x <> y! & associative operator of semigroup\\
 \bottomrule
 \end{tabular}
 \end{center}
