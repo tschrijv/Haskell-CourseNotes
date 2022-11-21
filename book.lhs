@@ -22,6 +22,7 @@
 \usepackage[all]{xy}
 \usepackage{enumerate}
 \newcommand\titlebar{\llap{\colorbox[rgb]{0.99,0.78,0.07}{\kern0.15em\thesection\kern0.15em}\quad}}
+\usepackage{forest}
 %\titleformat{\section}{\Large\bf}{\titlebar}{0cm}{}[\hrule]
 %\titleformat{\subsection}{\large\bf}{\llap{\kern0.15em\thesubsection\kern0.15em\quad}}{0cm}{}[]
 

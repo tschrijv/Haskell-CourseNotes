@@ -32,7 +32,44 @@ is a computer science application of this.}
 < foldl c n [x1,x2,x3,x4]   =  c (c (c (c n x1) x2) x3) x4
 < foldr c n [x1,x2,x3,x4]   =  c x1 (c x2 (c x3 (c x4 n)))
 
-The first accumulates values from the left and the second from the right. This
+\begin{figure}
+\begin{center}
+\begin{forest}
+ [,phantom
+  [|c|,tier=one
+   [|c|,tier=two
+    [|c|,tier=three
+     [|c|,tier=four
+      [|n|,tier=five]
+      [|x1|,tier=five]
+     ]
+     [|x2|,tier=four]
+    ]
+    [|x3|,tier=three]
+   ]
+   [|x4|,tier=two]
+  ]
+  [$~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$]
+  [|c|,tier=one
+   [|x1|,tier=two]
+   [|c|,tier=two
+    [|x2|,tier=three]
+    [|c|,tier=three
+     [|x3|,tier=four]
+     [|c|,tier=four
+      [|x4|,tier=five]
+      [|n|,tier=five]
+     ]
+    ]
+   ]
+  ]
+ ]
+\end{forest}
+\end{center}
+\caption{Evaluation trees of |foldl c n [x1,x2,x3,x4]| (left) and  |foldr c n [x1,x2,x3,x4]| (right).}\label{fig:leftvsright}
+\end{figure}
+
+The first accumulates values from the left and the second from the right (see Figure~\ref{fig:leftvsright}). This
 can yield very different results. For example,
 
 < > foldl (-) 0 [1,2,3,4]
@@ -212,6 +249,33 @@ The computation tree of |foldDC| is binary:
 < foldDC [x1,x2,x3,x4,x5,x6,x7,x8]
 < =
 < ((x1 <> x2) <> (x3 <> x4)) <> ((x5 <> x6) <> (x7 <> x8))
+
+\begin{center}
+\begin{forest}
+  [|<>|
+   [|<>|,tier=two
+    [|<>|,tier=three
+     [|x1|,tier=four]
+     [|x2|,tier=four]
+    ]
+    [|<>|,tier=three
+     [|x3|,tier=four]
+     [|x4|,tier=four]
+    ]
+   ] 
+   [|<>|,tier=two
+    [|<>|,tier=three
+     [|x5|,tier=four]
+     [|x6|,tier=four]
+    ]
+    [|<>|,tier=three
+     [|x7|,tier=four]
+     [|x8|,tier=four]
+    ]
+   ]
+  ]
+\end{forest}
+\end{center}
 
 Here the independent parts of the tree can be processed in parallel. 
 In other words, if we can express an algorithm as a fold with a monoid,
