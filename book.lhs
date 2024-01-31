@@ -75,7 +75,7 @@
 \tsbook{Introduction to Haskell}
        {Tom Schrijvers}
        {Tom Schrijvers}
-       {2022}
+       {2023}
        {xxxxx}{xxx--xx--xxxx--xx--x}{2.0}
        {Scientica}
        {Leuven}

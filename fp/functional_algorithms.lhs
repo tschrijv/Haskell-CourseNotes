@@ -18,7 +18,7 @@ right fold.
 
 < foldl :: (b -> a -> b) -> b -> [a] -> b
 < foldl cl nl []      =  nl
-< foldl cn nl (x:xs)  =  foldl cn (cn nl x) xs
+< foldl cl nl (x:xs)  =  foldl cl (cl nl x) xs
 
 < foldr :: (a -> b -> b) -> b -> [a] -> b
 < foldr cr nr []      =  nr
@@ -75,7 +75,7 @@ can yield very different results. For example,
 < > foldl (-) 0 [1,2,3,4]
 < -10
 < > foldr (-) 0 [1,2,3,4]
-< 2
+< -2
 
 However, there are algebras where accumulating form the left or the right yields the same output 
 for any list. For example,
@@ -353,7 +353,7 @@ into a |Sortedness| value.
 We accumulate (also called \emph{crush}) all the monoid values
 with |foldDC|, which can be done in parallel.
 \item
-We extra the boolean from the resulting monoid value.
+We extract the boolean from the resulting monoid value.
 
 > toBool :: Sortedness a -> Bool
 > toBool EmptySorted   =  True

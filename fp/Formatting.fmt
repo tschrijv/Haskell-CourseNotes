@@ -54,6 +54,11 @@
 %format x1
 %format x2
 %format x3
+%format x4
+%format x5
+%format x6
+%format x7
+%format x8
 %format y1
 %format y2
 %format y3

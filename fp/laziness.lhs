@@ -205,7 +205,7 @@ not behave as expected.
 %-------------------------------------------------------------------------------
 \subsection{Infinite Data Structures}
 
-Infinite data structers are a remarkable application of lazy evaluation.
+Infinite data structures are a remarkable application of lazy evaluation.
 
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 \paragraph{Infinite Data Structures}
