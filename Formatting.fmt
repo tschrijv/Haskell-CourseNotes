@@ -236,7 +236,6 @@
 %format PIfZero = IfZero
 %format One    = "\con{One}"
 %format Let    = "\con{Let}"
-%format Var    = "\con{Var}"
 %format Lam    = "\con{Lam}"
 %format App    = "\con{App}"
 %format Mu     = "\con{Mu}"
@@ -357,3 +356,8 @@
 
 %format ?> = "\blacktriangleright\;"
 %format <> = "\mathbin{\diamond}"
+
+%format Atom2 = Atom
+%format Clause2 = Clause
+%format := = :-
+%format Prog2 = Prog

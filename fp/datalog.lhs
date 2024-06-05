@@ -5,10 +5,12 @@
 
 > import Data.Char
 > import System.Random
-> import Data.Set hiding (null, toList)
-> import Data.Map hiding (null, toList, union)
+> import Data.Set hiding (null, toList, insert, map)
+> import Data.Map hiding (null, toList, union, map)
 > import qualified Data.Set as Set
 > import qualified Data.Map as Map
+> import Data.Foldable (foldrM)
+> import Debug.Trace
 
 %endif
 
@@ -213,7 +215,7 @@ copy-paste this output in a program, it recreates that set.
 We compute the least fixedpoint of the operator with the 
 following higher-order function.
 
-> lfp :: (Set Atom -> Set Atom) -> Set Atom
+> lfp :: Ord a => (Set a -> Set a) -> Set a
 > lfp op = go op Set.empty
 >   where
 >     go op s = let s' = op s
@@ -558,6 +560,112 @@ expressive than Propositional Datalog; its programs are just more concise.
 The downside of this semantics is that it is indirect.
 
 %-------------------------------------------------------------------------------
+\subsection{Incremental Grounding Semantics}
+
+Computing a full grounding of the Datalog program up front can be quite costly.
+Instead, we will follow a more incremental approach where we ground clauses
+incrementally, when needed.
+
+The need for grounding will arise when we check whether a body atom in a clause
+is equal to one of the given ground atoms. Consider the given ground atom
+\texttt{e(a, b)} and the clause \texttt{p(X, Y) :- e(X, Y)}. After grounding
+the clause, we get four different ground variants featuring respectively the grounded
+body atoms \texttt{e(a, a)}, \texttt{e(a, b)}, \texttt{e(b, a)} and \texttt{(b, b)}.
+Only one of these is equal to the given ground atom. 
+
+In the incremental approach we start checking the equality of the given ground
+atom \texttt{e(a, b)} and the body atom \texttt{e(X, Y)} without grounding it
+upfront. This procedure is known as \emph{matching}; matching checks whether a non-ground atom can be made equal to a ground atom via judicious grounding.
+It proceeds as follows:
+\begin{enumerate}
+\item
+Matching first checks whether the predicates of both atoms are equal.
+Both are \texttt{e/2}. Since that checks out, we continue.
+\item
+Next, we check whether the corresponding first arguments match.
+The ground atom's first argument \texttt{a} can be made equal
+to the other's first argument \texttt{X} by grounding \texttt{X} to \texttt{a}.
+Since that checks out, we continue.
+\item
+Finally, we do the same with the second argument of both terms.
+The ground atom's second argument \texttt{b} can be made
+equal to the other's second argument \texttt{Y} by grounding
+\texttt{Y} to \texttt{b}.
+Since that checks out and this was the last check,
+the whole matching succeeds.
+\end{enumerate}
+Matching does more than report its success. It also returns the grounding
+decisions for variables that it makes. These decisions are recorded in a data
+structure known as a unifier or unifying substitution. It is a map
+from variables to constants. For example, our matching above yields the 
+unifier $\{ \texttt{X} \mapsto \texttt{a}, \texttt{Y} \mapsto \texttt{b} \}$.
+We often refer to a unifier with the Greek letter $\theta$. For example, we write:
+\begin{equation*}
+\theta = \{ \texttt{X} \mapsto \texttt{a}, \texttt{Y} \mapsto \texttt{b} \}
+\end{equation*}
+The unifier $\theta$ is constructed incrementally throughout the matching
+process. In the examle above it starts out empty: $\emptyset$.
+In step 2 we extend it to $\{ \texttt{X} \mapsto \texttt{a} \}$ and in step 3
+to its final value.
+
+The unifier serves two purposes:
+\begin{itemize}
+\item After matching the body, we use it to determine what the grounded form of the clause should be. For example, we use $\theta$ to ground the clause's head \texttt{p(X, Y)} to
+ \texttt{p(a, b)}. This process is known as \emph{substitution}. Notationally, we treat the unifier $\theta$ as a function that we apply to an atom or term. Hence, $\theta(\texttt{p(X, Y)}) = \texttt{p(a, b)}$.
+
+  The substitution recursively applies itself to the terms in the atom:
+    \begin{equation*}
+      \theta(\texttt{p(X, Y)}) = \texttt{p(}\theta(\texttt{X}), \theta(\texttt{Y})\texttt{)}
+    \end{equation*}
+  For the base cases we have:
+    \begin{eqnarray*}
+    \theta(\texttt{X}) & = & \texttt{a} \qquad \text{because $(\texttt{X} \mapsto \texttt{a}) \in \theta$} \\
+    \theta(\texttt{Y}) & = & \texttt{b} \qquad \text{because $(\texttt{Y} \mapsto \texttt{b}) \in \theta$} 
+    \end{eqnarray*}
+  Substitution does not affect constants. Any variables not present in the unifier are also left alone:
+    \begin{eqnarray*}
+    \theta(\texttt{c}) & = & \texttt{c} \qquad \text{because \texttt{c} is a constant} \\
+    \theta(\texttt{Z}) & = & \texttt{Z} \qquad \text{because $\texttt{Z} \not\in \theta$} 
+    \end{eqnarray*}
+
+
+  Recall the following syntactic restriction we imposed on clauses:
+  \begin{quote}
+   There is one additional rule about the use of variables: every variable that
+   appears in the head of a clause, must also appear in the body of that clause.
+  \end{quote}
+  This rule isn't strictly necessary for the naive grounding semantics, but
+  it's essential for the incremental grounding approach.
+  Indeed, it ensures that the unifier we obtain after incrementally grounding
+  the body also fully grounds the head.
+
+  \item During matching the unifier is used to ensure that consecutive grounding decisions about the same variable are consistent. Consider for example, matching \texttt{e(a, b)} with \texttt{e(X, X)}. To make the grounding succeed, we might want to ground the 
+  first occurrence of \texttt{X} to \texttt{a} and the second to \texttt{b}. However, this does not yield a valid grounding of \texttt{e(X, X)}; we can only choose one value for \texttt{X}. We use the unifier to discover that \texttt{e(a, b)} does not match \texttt{e(X, X)} as follows:
+    \begin{enumerate}
+    \item Initialize the unifier: $\theta_0 = \emptyset$.
+    \item Verify that the two predicates agree. This succeeds.
+    \item Match \texttt{a} with $\theta_0(\texttt{X}) = \texttt{X}$.
+          This succeeds, and yields the extended unifier $\theta_1 = \{ \texttt{X} \mapsto \texttt{a} \}$.
+    \item Match \texttt{b} with $\theta_1(\texttt{X}) = \texttt{a}$.
+          This fails because the two constants are different.
+    \end{enumerate}
+     Hence, the substitution is not only incrementally extended, but also
+     incrementally applied to the non-ground atom.
+\end{itemize}
+
+When the clause body consists of multiple atoms, we match given ground atoms
+against these non-ground atoms consecutively. The output unifier from matching
+the first atom becomes the input unifier for matching the next atom.  This way
+grounding decisions are made consistently across the whole body.
+
+For instance, we can match the given atoms \texttt{p(a, b)} and \texttt{p(p,
+c)} against the body of the clause \texttt{p(X, Y) :- p(X, Z), p(Z, Y)}.
+
+The first match yields the unifier $\{ \texttt{X} \mapsto \texttt{a},
+\texttt{Z} \mapsto \texttt{b}\}$. This is passed into the second matching,
+which allows checking that \texttt{Z} is grounded consistently.
+
+%-------------------------------------------------------------------------------
 \subsection{Haskell Implementation}
 
 The presence of arguments, and notably variables, considerably complicates the implementation.
@@ -566,7 +674,10 @@ The presence of arguments, and notably variables, considerably complicates the i
 
 We introduce a new datatype |Term| to represent the arguments of atoms.
 
-> data Term = Var Int | Constant String
+> data Term = Var VarId | Constant String
+>   deriving (Eq, Ord, Show)
+>
+> type VarId = Int
 
 We distinguish two terms. 
 Constants take their name, a string, as a parameter.
@@ -576,6 +687,7 @@ denote different variables.
 With terms in place, we redefine the type of atoms.
 
 > data Atom2 = Atom2 Predicate [Term]
+>   deriving (Eq, Ord, Show)
 
 An atom now consists of a predicate name and a list of terms as arguments.
 The predicate name is just a string.
@@ -586,6 +698,7 @@ The definitions of |Clause| and |Prog| do not change.
 %if False
 
 > data Clause2 = Atom2 := [Atom2]
+>   deriving Show
 > type Prog2 = [Clause2]
 
 
@@ -612,9 +725,126 @@ Here is the Haskell encoding of the reachability program we saw earlier:
 
 \paragraph{Semantics Updates}
 
-Computing a full grounding of the Datalog program up front can be quite costly.
-Instead, we will follow a more incremental approach where we ground clauses
-incrementally, when needed.
+While implementing the naive grounding approach is a good exercise, we focus
+here on the more involved incremental grounding approach.
 
-The need for grounding will arise when we check whether a body atom in a clause
-is equal to one of the given ground atoms. Hence, we ground
+This approach centers around the use of a unifier, which is a mapping from
+varibles to constants. At the implementation level we use a Haskell |Map|
+datatype to represent these unifiers. The keys in this map are variable
+identifiers and the values are terms. For the time being these terms will
+always be constants, but we will generalize this later. 
+
+> type Unifier = Map VarId Term
+
+The empty unifier, which we denoted mathematically as $\emptyset$, 
+is then represented by the empty map datastructure.
+
+> emptyUnifier :: Unifier
+> emptyUnifier = Map.empty
+
+The following function defines the effect of substitution on a term.
+
+> substituteTerm :: Unifier -> Term -> Term
+> substituteTerm u  (Var x)       = findWithDefault (Var x) x u
+> substituteTerm u  (Constant c)  = Constant c
+
+The replacement for variables is looked up in the unifier map. If
+no replacement is present, the variable itself is returned. Constants
+are also unaffected by the substitution.
+
+Substitution on atoms simply delegates the substitution to its
+argument terms.
+
+> substituteAtom :: Unifier -> Atom2 -> Atom2
+> substituteAtom u (Atom2 p ts) = Atom2 p (map (substituteTerm u) ts)
+
+Next, we provide the function to match a ground term against 
+a non-ground term.
+
+> matchTerm :: Term -> Term -> Unifier -> Maybe Unifier
+> matchTerm t1 t2 u = go t1 (substituteTerm u t2) u where
+>   go (Constant c1)  (Constant c2)  u =  if c1 == c2 then Just u else Nothing
+>   go (Constant c)   (Var x)        u =  Just (insert x (Constant c) u)
+>   go t1             t2             u =  error ("matchTerm: unreachable case")
+
+This function takes the current unifier and maybe produces a new unifier. 
+The |Nothing| value is returned when the matching fails. 
+
+The current unifier is first applied to the non-ground term to account for any
+previous grounding decisions. Then there are three cases:
+\begin{itemize}
+\item
+A constant matches
+another contant when they are equal; this does not extend the unifier.  
+\item
+A constant always matches a variable, and extends the unifier accordingly.
+\item
+Because a ground term cannot be a variable, the third case can only be reached
+when there is an implementation error.
+\end{itemize}
+
+The |matchAtom| function extends term matching to atom matching.
+This first checks that the predicate names and arities of the two
+atoms agree. Then it sequentially matches the corresponding argument
+terms.
+
+> matchAtom :: Atom2 -> Atom2 -> Unifier -> Maybe Unifier
+> matchAtom (Atom2 p1 ts1) (Atom2 p2 ts2) u
+>   | p1 /= p2                  = Nothing
+>   | length ts1 /= length ts2  = Nothing
+>   | otherwise                 = foldrM (uncurry matchTerm) u (zip ts1 ts2) 
+
+The term matching makes use of the |foldrM| recursion scheme, a
+``monadic'' version of |foldr|:
+
+< foldrM :: Monad m => (a -> b -> m b) -> b -> [a] -> m b
+< foldrM c n []      =  return n
+< foldrM c n (x:xs)  =  do  b <- foldrM c n xs
+<                           c x b
+
+Next, we compute all given ground atoms that match against a
+given non-ground atom.
+
+> matchAtomIn :: [Atom2] -> Atom2 -> Unifier -> [Unifier]
+> matchAtomIn a1s a2 u =
+>   [u' | Just u' <- map (\a1 -> matchAtom a1 a2 u) a1s]
+
+We generalize the above function to compute all the ways in which a given set
+of ground atoms can be used to match all non-ground atoms in a given list.
+
+> matchAtomsIn :: Set Atom2 -> [Atom2] -> [Unifier]
+> matchAtomsIn s1 a2s =
+>   foldrM (matchAtomIn (Set.toList s1)) emptyUnifier a2s
+
+Now, we put everything together in our new immediate
+consequence operator.
+
+> t2 :: Prog2 -> Set Atom2 -> Set Atom2
+> t2 p s = Set.fromList [  substituteAtom u h  
+>                       |  (h := b) <- p 
+>                       ,  u <- matchAtomsIn s b
+>                       ]
+
+This operator iterates over all clauses in the program,
+and finds all ways in which its a given set of atoms
+can match its non-ground body. Each match yields
+a unifier that is used to ground the clause head
+and thus yields a new ground atom in the result set.
+
+Finally, the semantics of a program is defined again as
+the fixpoint of the immediate consequence operator:
+
+> sem2 :: Prog2 -> Set Atom2
+> sem2 p = lfp (t2 p)
+
+For example,
+
+< > sem2 prog2
+< fromList  [Atom "edge" [Constant "a",Constant "b"]
+<           ,Atom "edge" [Constant "b",Constant "c"]
+<           ,Atom "edge" [Constant "b",Constant "d"]
+<           ,Atom "reach" [Constant "a",Constant "b"]
+<           ,Atom "reach" [Constant "a",Constant "c"]
+<           ,Atom "reach" [Constant "a",Constant "d"]
+<           ,Atom "reach" [Constant "b",Constant "c"]
+<           ,Atom "reach" [Constant "b",Constant "d"]]

@@ -92,47 +92,51 @@
 %\addcontentsline{toc}{chapter}{List of Symbols}
 \input{fp/symbols}
 
-%-------------------------------------------------------------------------------
-\chapter{Introduction}\label{ch:inleiding}
-\input{fp/inleiding}
-
-%===============================================================================
-\part{Basic Topics}
-
-%-------------------------------------------------------------------------------
-\chapter{First Steps in Haskell}
-\input{fp/eerste_stappen}
- 
-%-------------------------------------------------------------------------------
-\chapter{Functions}
-\input{fp/functies_en_type_classes}
-
-%-------------------------------------------------------------------------------
-\chapter{I/O}
-\input{fp/io}
-
-%===============================================================================
-\part{Advanced Topics}
-
-%-------------------------------------------------------------------------------
-\chapter{Functional Algorithms, a Case Study}
-\input{fp/functional_algorithms}
-
-%-------------------------------------------------------------------------------
-\chapter{Equational Reasoning}
-\input{fp/EquationalReasoning}
-
-%-------------------------------------------------------------------------------
-\chapter{Lazy Evaluation}\label{ch:lazy_evaluation}
-\input{fp/laziness}
-
 % %-------------------------------------------------------------------------------
-% \chapter{Case Study: Parsers}
-% \input{fp/parsers}
+% \chapter{Introduction}\label{ch:inleiding}
+% \input{fp/inleiding}
+% 
+% %===============================================================================
+% \part{Basic Topics}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{First Steps in Haskell}
+% \input{fp/eerste_stappen}
+%  
+% %-------------------------------------------------------------------------------
+% \chapter{Functions}
+% \input{fp/functies_en_type_classes}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{I/O}
+% \input{fp/io}
+% 
+% %===============================================================================
+% \part{Advanced Topics}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{Functional Algorithms, a Case Study}
+% \input{fp/functional_algorithms}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{Equational Reasoning}
+% \input{fp/EquationalReasoning}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{Lazy Evaluation}\label{ch:lazy_evaluation}
+% \input{fp/laziness}
+% 
+% % %-------------------------------------------------------------------------------
+% % \chapter{Case Study: Parsers}
+% % \input{fp/parsers}
+% 
+% %-------------------------------------------------------------------------------
+% \chapter{Monads}\label{ch:monads}
+% \input{fp/monads}
 
 %-------------------------------------------------------------------------------
-\chapter{Monads}\label{ch:monads}
-\input{fp/monads}
+\chapter{Datalog}\label{ch:datalog}
+\input{fp/datalog}
 
 \appendix
 
